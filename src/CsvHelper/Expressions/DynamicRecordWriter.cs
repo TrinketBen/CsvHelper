@@ -9,7 +9,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using Microsoft.CSharp.RuntimeBinder;
+// !BENNOTE!
+//using Microsoft.CSharp.RuntimeBinder;
 
 namespace CsvHelper.Expressions
 {
@@ -66,8 +67,9 @@ namespace CsvHelper.Expressions
 			var callSite = (CallSite<Func<CallSite, IDynamicMetaObjectProvider, object>>?)getters[name];
 			if (callSite == null)
 			{
-				var getMemberBinder = Binder.GetMember(CSharpBinderFlags.None, name, typeof(DynamicRecordWriter), new CSharpArgumentInfo[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) });
-				getters[name] = callSite = CallSite<Func<CallSite, IDynamicMetaObjectProvider, object>>.Create(getMemberBinder);
+				// !BENNOTE!
+				//var getMemberBinder = Binder.GetMember(CSharpBinderFlags.None, name, typeof(DynamicRecordWriter), new CSharpArgumentInfo[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) });
+				//getters[name] = callSite = CallSite<Func<CallSite, IDynamicMetaObjectProvider, object>>.Create(getMemberBinder);
 			}
 
 			return callSite.Target(callSite, target);
