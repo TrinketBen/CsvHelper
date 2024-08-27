@@ -1,0 +1,13 @@
+{
+  "name": "com.github.csvhelper",
+  "displayName": "CsvHelper",
+  "version": "33.0.0",
+  "unity": "2022.3",
+  "description": "A library for reading and writing CSV files. Extremely fast, flexible, and easy to use. Supports reading and writing of custom class objects.",
+  "changelogUrl": "README.markdown",
+  "licenseUrl": "LICENSE.txt",
+  "author": {
+    "name": "CsvHelper",
+    "url": "https://github.com/JoshClose/CsvHelper"
+  }
+}
