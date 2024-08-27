@@ -2,17 +2,20 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
+using System.Linq;
 using CsvHelper.Configuration;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts an <see cref="object"/> to and from a <see cref="string"/>.
-/// </summary>
-public class DefaultTypeConverter : ITypeConverter
+namespace CsvHelper.TypeConversion
 {
-	/// <inheritdoc/>
-	public virtual object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+	/// <summary>
+	/// Converts an <see cref="object"/> to and from a <see cref="string"/>.
+	/// </summary>
+	public class DefaultTypeConverter : ITypeConverter
+	{
+		/// <inheritdoc/>
+		public virtual object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		if (memberMapData.UseDefaultOnConversionFailure && memberMapData.IsDefaultSet && memberMapData.Member!.MemberType() == memberMapData.Default?.GetType())
 		{
@@ -35,8 +38,8 @@ public class DefaultTypeConverter : ITypeConverter
 		throw new TypeConverterException(this, memberMapData, text, row.Context, message);
 	}
 
-	/// <inheritdoc/>
-	public virtual string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+		/// <inheritdoc/>
+		public virtual string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		if (value == null)
 		{
@@ -55,5 +58,6 @@ public class DefaultTypeConverter : ITypeConverter
 		}
 
 		return value?.ToString() ?? string.Empty;
+	}
 	}
 }

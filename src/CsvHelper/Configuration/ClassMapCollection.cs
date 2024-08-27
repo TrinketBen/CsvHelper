@@ -2,29 +2,33 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
-namespace CsvHelper.Configuration;
-
-/// <summary>
-/// Collection that holds CsvClassMaps for record types.
-/// </summary>
-public class ClassMapCollection
+namespace CsvHelper.Configuration
 {
-	private readonly Dictionary<Type, ClassMap> data = new Dictionary<Type, ClassMap>();
-	private readonly CsvContext context;
-
 	/// <summary>
-	/// Gets the <see cref="ClassMap"/> for the specified record type.
+	/// Collection that holds CsvClassMaps for record types.
 	/// </summary>
-	/// <value>
-	/// The <see cref="ClassMap"/>.
-	/// </value>
-	/// <param name="type">The record type.</param>
-	/// <returns>The <see cref="ClassMap"/> for the specified record type.</returns>
-	public virtual ClassMap? this[Type type]
+	public class ClassMapCollection
 	{
-		get
+		private readonly Dictionary<Type, ClassMap> data = new Dictionary<Type, ClassMap>();
+		private readonly CsvContext context;
+
+		/// <summary>
+		/// Gets the <see cref="ClassMap"/> for the specified record type.
+		/// </summary>
+		/// <value>
+		/// The <see cref="ClassMap"/>.
+		/// </value>
+		/// <param name="type">The record type.</param>
+		/// <returns>The <see cref="ClassMap"/> for the specified record type.</returns>
+		public virtual ClassMap? this[Type type]
+		{
+			get
 		{
 			// Go up the inheritance tree to find the matching type.
 			// We can't use IsAssignableFrom because both a child
@@ -44,34 +48,34 @@ public class ClassMapCollection
 				}
 			}
 		}
-	}
+		}
 
-	/// <summary>
-	/// Creates a new instance using the given configuration.
-	/// </summary>
-	/// <param name="context">The context.</param>
-	public ClassMapCollection(CsvContext context)
+		/// <summary>
+		/// Creates a new instance using the given configuration.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		public ClassMapCollection(CsvContext context)
 	{
 		this.context = context;
 	}
 
-	/// <summary>
-	/// Finds the <see cref="ClassMap"/> for the specified record type.
-	/// </summary>
-	/// <typeparam name="T">The record type.</typeparam>
-	/// <returns>The <see cref="ClassMap"/> for the specified record type.</returns>
-	public virtual ClassMap<T>? Find<T>()
+		/// <summary>
+		/// Finds the <see cref="ClassMap"/> for the specified record type.
+		/// </summary>
+		/// <typeparam name="T">The record type.</typeparam>
+		/// <returns>The <see cref="ClassMap"/> for the specified record type.</returns>
+		public virtual ClassMap<T>? Find<T>()
 	{
 		return (ClassMap<T>?)this[typeof(T)];
 	}
 
-	/// <summary>
-	/// Adds the specified map for it's record type. If a map
-	/// already exists for the record type, the specified
-	/// map will replace it.
-	/// </summary>
-	/// <param name="map">The map.</param>
-	internal virtual void Add(ClassMap map)
+		/// <summary>
+		/// Adds the specified map for it's record type. If a map
+		/// already exists for the record type, the specified
+		/// map will replace it.
+		/// </summary>
+		/// <param name="map">The map.</param>
+		internal virtual void Add(ClassMap map)
 	{
 		SetMapDefaults(map);
 
@@ -80,11 +84,11 @@ public class ClassMapCollection
 		data[type] = map;
 	}
 
-	/// <summary>
-	/// Removes the class map.
-	/// </summary>
-	/// <param name="classMapType">The class map type.</param>
-	internal virtual void Remove(Type classMapType)
+		/// <summary>
+		/// Removes the class map.
+		/// </summary>
+		/// <param name="classMapType">The class map type.</param>
+		internal virtual void Remove(Type classMapType)
 	{
 		if (!typeof(ClassMap).IsAssignableFrom(classMapType))
 		{
@@ -96,20 +100,20 @@ public class ClassMapCollection
 		data.Remove(type);
 	}
 
-	/// <summary>
-	/// Removes all maps.
-	/// </summary>
-	internal virtual void Clear()
+		/// <summary>
+		/// Removes all maps.
+		/// </summary>
+		internal virtual void Clear()
 	{
 		data.Clear();
 	}
 
-	/// <summary>
-	/// Goes up the inheritance tree to find the type instance of CsvClassMap{}.
-	/// </summary>
-	/// <param name="type">The type to traverse.</param>
-	/// <returns>The type that is CsvClassMap{}.</returns>
-	private Type GetGenericCsvClassMapType(Type type)
+		/// <summary>
+		/// Goes up the inheritance tree to find the type instance of CsvClassMap{}.
+		/// </summary>
+		/// <param name="type">The type to traverse.</param>
+		/// <returns>The type that is CsvClassMap{}.</returns>
+		private Type GetGenericCsvClassMapType(Type type)
 	{
 		if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(ClassMap<>))
 		{
@@ -121,14 +125,14 @@ public class ClassMapCollection
 		return GetGenericCsvClassMapType(baseType);
 	}
 
-	/// <summary>
-	/// Sets defaults for the mapping tree. The defaults used
-	/// to be set inside the classes, but this didn't allow for
-	/// the TypeConverter to be created from the Configuration's
-	/// TypeConverterFactory.
-	/// </summary>
-	/// <param name="map">The map to set defaults on.</param>
-	private void SetMapDefaults(ClassMap map)
+		/// <summary>
+		/// Sets defaults for the mapping tree. The defaults used
+		/// to be set inside the classes, but this didn't allow for
+		/// the TypeConverter to be created from the Configuration's
+		/// TypeConverterFactory.
+		/// </summary>
+		/// <param name="map">The map to set defaults on.</param>
+		private void SetMapDefaults(ClassMap map)
 	{
 		foreach (var parameterMap in map.ParameterMaps)
 		{
@@ -183,5 +187,6 @@ public class ClassMapCollection
 				referenceMap.Data.Prefix = context.Configuration.ReferenceHeaderPrefix(args);
 			}
 		}
+	}
 	}
 }

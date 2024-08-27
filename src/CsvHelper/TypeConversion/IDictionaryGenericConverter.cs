@@ -4,22 +4,23 @@
 // https://github.com/JoshClose/CsvHelper
 using CsvHelper.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts an <see cref="IDictionary{TKey, TValue}"/> to and from a <see cref="string"/>.
-/// </summary>
-public class IDictionaryGenericConverter : IDictionaryConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the string to an object.
+	/// Converts an <see cref="IDictionary{TKey, TValue}"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+	public class IDictionaryGenericConverter : IDictionaryConverter
+	{
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		var keyType = memberMapData.Member!.MemberType().GetGenericArguments()[0];
 		var valueType = memberMapData.Member!.MemberType().GetGenericArguments()[1];
@@ -40,5 +41,6 @@ public class IDictionaryGenericConverter : IDictionaryConverter
 		}
 
 		return dictionary;
+	}
 	}
 }

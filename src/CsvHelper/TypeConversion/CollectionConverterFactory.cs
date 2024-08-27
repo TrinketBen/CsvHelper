@@ -2,25 +2,28 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 
-namespace CsvHelper.TypeConversion;
-
-/// <inheritdoc />
-public class CollectionConverterFactory : ITypeConverterFactory
+namespace CsvHelper.TypeConversion
 {
-	private int dictionaryTypeHashCode = typeof(IDictionary).GetHashCode();
-	private List<int> enumerableTypeHashCodes = new List<int>
-	{
-		typeof(IList).GetHashCode(),
-		typeof(ICollection).GetHashCode(),
-		typeof(IEnumerable).GetHashCode(),
-	};
-
 	/// <inheritdoc />
-	public bool CanCreate(Type type)
+	public class CollectionConverterFactory : ITypeConverterFactory
+	{
+		private int dictionaryTypeHashCode = typeof(IDictionary).GetHashCode();
+		private List<int> enumerableTypeHashCodes = new List<int>
+		{
+			typeof(IList).GetHashCode(),
+			typeof(ICollection).GetHashCode(),
+			typeof(IEnumerable).GetHashCode(),
+		};
+
+		/// <inheritdoc />
+		public bool CanCreate(Type type)
 	{
 		switch (type)
 		{
@@ -89,8 +92,8 @@ public class CollectionConverterFactory : ITypeConverterFactory
 		return false;
 	}
 
-	/// <inheritdoc />
-	public bool Create(Type type, TypeConverterCache cache, out ITypeConverter typeConverter)
+		/// <inheritdoc />
+		public bool Create(Type type, TypeConverterCache cache, out ITypeConverter typeConverter)
 	{
 		var typeHashCode = type.GetHashCode();
 
@@ -168,5 +171,6 @@ public class CollectionConverterFactory : ITypeConverterFactory
 		}
 
 		throw new InvalidOperationException($"Cannot create collection converter for type '{type.FullName}'.");
+	}
 	}
 }

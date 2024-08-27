@@ -5,22 +5,23 @@
 using CsvHelper.Configuration;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Linq;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts a <see cref="Collection{T}"/> to and from a <see cref="string"/>.
-/// </summary>
-public class CollectionGenericConverter : IEnumerableConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the string to an object.
+	/// Converts a <see cref="Collection{T}"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+	public class CollectionGenericConverter : IEnumerableConverter
+	{
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		// Since we're using the MemberType here, this converter can be used for multiple types
 		// as long as they implement IList.
@@ -58,5 +59,6 @@ public class CollectionGenericConverter : IEnumerableConverter
 		}
 
 		return list;
+	}
 	}
 }

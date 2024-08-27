@@ -2,19 +2,22 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
-namespace CsvHelper.TypeConversion;
 
-/// <inheritdoc />
-public class EnumConverterFactory : ITypeConverterFactory
+using System;
+
+namespace CsvHelper.TypeConversion
 {
 	/// <inheritdoc />
-	public bool CanCreate(Type type)
+	public class EnumConverterFactory : ITypeConverterFactory
+	{
+		/// <inheritdoc />
+		public bool CanCreate(Type type)
 	{
 		return typeof(Enum).IsAssignableFrom(type);
 	}
 
-	/// <inheritdoc />
-	public bool Create(Type type, TypeConverterCache cache, out ITypeConverter typeConverter)
+		/// <inheritdoc />
+		public bool Create(Type type, TypeConverterCache cache, out ITypeConverter typeConverter)
 	{
 		if (cache.Contains(typeof(Enum)))
 		{
@@ -28,5 +31,6 @@ public class EnumConverterFactory : ITypeConverterFactory
 		typeConverter = new EnumConverter(type);
 
 		return true;
+	}
 	}
 }

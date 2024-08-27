@@ -4,22 +4,22 @@
 // https://github.com/JoshClose/CsvHelper
 using System.Reflection;
 
-namespace CsvHelper.Configuration;
-
-/// <summary>
-/// The configuration data for the reference map.
-/// </summary>
-public class MemberReferenceMapData
+namespace CsvHelper.Configuration
 {
-	private string prefix = string.Empty;
-
 	/// <summary>
-	/// Gets or sets the header prefix to use.
+	/// The configuration data for the reference map.
 	/// </summary>
-	public virtual string Prefix
+	public class MemberReferenceMapData
 	{
-		get { return prefix; }
-		set
+		private string prefix = string.Empty;
+
+		/// <summary>
+		/// Gets or sets the header prefix to use.
+		/// </summary>
+		public virtual string Prefix
+		{
+			get { return prefix; }
+			set
 		{
 			prefix = value;
 			foreach (var memberMap in Mapping.MemberMaps)
@@ -35,33 +35,34 @@ public class MemberReferenceMapData
 				}
 			}
 		}
-	}
+		}
 
-	/// <summary>
-	/// Gets or sets a value indicating if a prefix should inherit its parent.
-	/// <c>true</c> to inherit, otherwise <c>false</c>.
-	/// </summary>
-	public virtual bool Inherit { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating if a prefix should inherit its parent.
+		/// <c>true</c> to inherit, otherwise <c>false</c>.
+		/// </summary>
+		public virtual bool Inherit { get; set; }
 
-	/// <summary>
-	/// Gets the <see cref="MemberInfo"/> that the data
-	/// is associated with.
-	/// </summary>
-	public virtual MemberInfo Member { get; private set; }
+		/// <summary>
+		/// Gets the <see cref="MemberInfo"/> that the data
+		/// is associated with.
+		/// </summary>
+		public virtual MemberInfo Member { get; private set; }
 
-	/// <summary>
-	/// Gets the mapping this is a reference for.
-	/// </summary>
-	public ClassMap Mapping { get; private set; }
+		/// <summary>
+		/// Gets the mapping this is a reference for.
+		/// </summary>
+		public ClassMap Mapping { get; private set; }
 
-	/// <summary>
-	/// Initializes a new instance of the <see cref="MemberReferenceMapData"/> class.
-	/// </summary>
-	/// <param name="member">The member.</param>
-	/// <param name="mapping">The mapping this is a reference for.</param>
-	public MemberReferenceMapData(MemberInfo member, ClassMap mapping)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MemberReferenceMapData"/> class.
+		/// </summary>
+		/// <param name="member">The member.</param>
+		/// <param name="mapping">The mapping this is a reference for.</param>
+		public MemberReferenceMapData(MemberInfo member, ClassMap mapping)
 	{
 		Member = member;
 		Mapping = mapping;
+	}
 	}
 }

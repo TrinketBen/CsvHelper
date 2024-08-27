@@ -1,16 +1,20 @@
-﻿namespace CsvHelper;
+﻿using System.IO;
+using System.Threading.Tasks;
 
-internal static class AsyncExtensions
+namespace CsvHelper
 {
-#if !(NETSTANDARD2_1_OR_GREATER || NET)
-	public static ValueTask DisposeAsync(this TextWriter textWriter)
+	internal static class AsyncExtensions
 	{
-		if (textWriter != null)
+#if !(NETSTANDARD2_1_OR_GREATER || NET)
+		public static ValueTask DisposeAsync(this TextWriter textWriter)
 		{
-			textWriter.Dispose();
-		}
+			if (textWriter != null)
+			{
+				textWriter.Dispose();
+			}
 
-		return default;
-	}
+			return default;
+		}
 #endif
+	}
 }

@@ -4,21 +4,21 @@
 // https://github.com/JoshClose/CsvHelper
 using CsvHelper.Configuration;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts a <see cref="char"/> to and from a <see cref="string"/>.
-/// </summary>
-public class CharConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the string to an object.
+	/// Converts a <see cref="char"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+	public class CharConverter : DefaultTypeConverter
+	{
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		if (text != null && text.Length > 1)
 		{
@@ -31,5 +31,6 @@ public class CharConverter : DefaultTypeConverter
 		}
 
 		return base.ConvertFromString(text, row, memberMapData);
+	}
 	}
 }

@@ -4,22 +4,24 @@
 // https://github.com/JoshClose/CsvHelper
 using CsvHelper.Configuration;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts an <see cref="IEnumerable"/> to and from a <see cref="string"/>.
-/// </summary>
-public class IEnumerableConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the object to a string.
+	/// Converts an <see cref="IEnumerable"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="value">The object to convert to a string.</param>
-	/// <param name="row"></param>
-	/// <param name="memberMapData"></param>
-	/// <returns>The string representation of the object.</returns>
-	public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+	public class IEnumerableConverter : DefaultTypeConverter
+	{
+		/// <summary>
+		/// Converts the object to a string.
+		/// </summary>
+		/// <param name="value">The object to convert to a string.</param>
+		/// <param name="row"></param>
+		/// <param name="memberMapData"></param>
+		/// <returns>The string representation of the object.</returns>
+		public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		var list = value as IEnumerable;
 		if (list == null)
@@ -35,16 +37,16 @@ public class IEnumerableConverter : DefaultTypeConverter
 		return null;
 	}
 
-	/// <summary>
-	/// Converts the string to an object.
-	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
-		var list = new List<string?>();
+		var list = new List<string>();
 
 		if (memberMapData.IsNameSet || row.Configuration.HasHeaderRecord && !memberMapData.IsIndexSet)
 		{
@@ -78,5 +80,6 @@ public class IEnumerableConverter : DefaultTypeConverter
 		}
 
 		return list;
+	}
 	}
 }

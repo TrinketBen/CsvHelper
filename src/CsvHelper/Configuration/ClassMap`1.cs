@@ -2,30 +2,32 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace CsvHelper.Configuration;
-
-/// <summary>
-/// Maps class members to CSV fields.
-/// </summary>
-/// <typeparam name="TClass">The <see cref="System.Type"/> of class to map.</typeparam>
-public abstract class ClassMap<TClass> : ClassMap
+namespace CsvHelper.Configuration
 {
 	/// <summary>
-	/// Creates an instance of <see cref="ClassMap{TClass}"/>.
+	/// Maps class members to CSV fields.
 	/// </summary>
-	public ClassMap() : base(typeof(TClass)) { }
+	/// <typeparam name="TClass">The <see cref="System.Type"/> of class to map.</typeparam>
+	public abstract class ClassMap<TClass> : ClassMap
+	{
+		/// <summary>
+		/// Creates an instance of <see cref="ClassMap{TClass}"/>.
+		/// </summary>
+		public ClassMap() : base(typeof(TClass)) { }
 
-	/// <summary>
-	/// Maps a member to a CSV field.
-	/// </summary>
-	/// <param name="expression">The member to map.</param>
-	/// <param name="useExistingMap">If true, an existing map will be used if available.
-	/// If false, a new map is created for the same member.</param>
-	/// <returns>The member mapping.</returns>
-	public virtual MemberMap<TClass, TMember> Map<TMember>(Expression<Func<TClass, TMember?>> expression, bool useExistingMap = true)
+		/// <summary>
+		/// Maps a member to a CSV field.
+		/// </summary>
+		/// <param name="expression">The member to map.</param>
+		/// <param name="useExistingMap">If true, an existing map will be used if available.
+		/// If false, a new map is created for the same member.</param>
+		/// <returns>The member mapping.</returns>
+		public virtual MemberMap<TClass, TMember> Map<TMember>(Expression<Func<TClass, TMember>> expression, bool useExistingMap = true)
 	{
 		var (classMap, member) = GetMemberMap(expression);
 		var memberMap = classMap.Map(typeof(TClass), member, useExistingMap); ;
@@ -33,14 +35,14 @@ public abstract class ClassMap<TClass> : ClassMap
 		return (MemberMap<TClass, TMember>)memberMap;
 	}
 
-	/// <summary>
-	/// Maps a member to a CSV field.
-	/// </summary>
-	/// <param name="expression">The member to map.</param>
-	/// <param name="useExistingMap">If true, an existing map will be used if available.
-	/// If false, a new map is created for the same member.</param>
-	/// <returns>The member mapping.</returns>
-	public virtual MemberMap Map<T>(Expression<Func<T, object?>> expression, bool useExistingMap = true)
+		/// <summary>
+		/// Maps a member to a CSV field.
+		/// </summary>
+		/// <param name="expression">The member to map.</param>
+		/// <param name="useExistingMap">If true, an existing map will be used if available.
+		/// If false, a new map is created for the same member.</param>
+		/// <returns>The member mapping.</returns>
+		public virtual MemberMap Map<T>(Expression<Func<T, object?>> expression, bool useExistingMap = true)
 	{
 		var (classMap, member) = GetMemberMap(expression);
 		var memberMap = classMap.Map(typeof(TClass), member, useExistingMap);
@@ -48,23 +50,23 @@ public abstract class ClassMap<TClass> : ClassMap
 		return memberMap;
 	}
 
-	/// <summary>
-	/// Meant for internal use only. 
-	/// Maps a member to another class map. When this is used, accessing a property through
-	/// sub-property mapping later won't work. You can only use one or the other. When using
-	/// this, ConvertUsing will also not work.
-	/// </summary>
-	/// <typeparam name="TClassMap">The type of the class map.</typeparam>
-	/// <param name="expression">The expression.</param>
-	/// <param name="constructorArgs">Constructor arguments used to create the reference map.</param>
-	/// <returns>The reference mapping for the member.</returns>
-	public virtual MemberReferenceMap References<TClassMap>(Expression<Func<TClass, object?>> expression, params object[] constructorArgs) where TClassMap : ClassMap
+		/// <summary>
+		/// Meant for internal use only. 
+		/// Maps a member to another class map. When this is used, accessing a property through
+		/// sub-property mapping later won't work. You can only use one or the other. When using
+		/// this, ConvertUsing will also not work.
+		/// </summary>
+		/// <typeparam name="TClassMap">The type of the class map.</typeparam>
+		/// <param name="expression">The expression.</param>
+		/// <param name="constructorArgs">Constructor arguments used to create the reference map.</param>
+		/// <returns>The reference mapping for the member.</returns>
+		public virtual MemberReferenceMap References<TClassMap>(Expression<Func<TClass, object?>> expression, params object[] constructorArgs) where TClassMap : ClassMap
 	{
 		var member = ReflectionHelper.GetMember(expression);
 		return References(typeof(TClassMap), member, constructorArgs);
 	}
 
-	private (ClassMap, MemberInfo) GetMemberMap<TModel, TProperty>(Expression<Func<TModel, TProperty?>> expression)
+		private (ClassMap, MemberInfo) GetMemberMap<TModel, TProperty>(Expression<Func<TModel, TProperty?>> expression)
 	{
 		var stack = ReflectionHelper.GetMembers(expression);
 		if (stack.Count == 0)
@@ -106,5 +108,6 @@ public abstract class ClassMap<TClass> : ClassMap
 		member = stack.Pop();
 
 		return (currentClassMap, member);
+	}
 	}
 }

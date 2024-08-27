@@ -2,22 +2,26 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using CsvHelper.Delegates;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CsvHelper.Configuration;
-
-/// <summary>Holds the default callback methods for delegate members of <c>CsvHelper.Configuration.Configuration</c>.</summary>
-public static class ConfigurationFunctions
+namespace CsvHelper.Configuration
 {
-	private static readonly char[] lineEndingChars = new char[] { '\r', '\n' };
+	/// <summary>Holds the default callback methods for delegate members of <c>CsvHelper.Configuration.Configuration</c>.</summary>
+	public static class ConfigurationFunctions
+	{
+		private static readonly char[] lineEndingChars = new char[] { '\r', '\n' };
 
-	/// <summary>
-	/// Throws a <see cref="ValidationException"/> if <see name="HeaderValidatedArgs.InvalidHeaders"/> is not empty.
-	/// </summary>
-	public static void HeaderValidated(HeaderValidatedArgs args)
+		/// <summary>
+		/// Throws a <see cref="ValidationException"/> if <see name="HeaderValidatedArgs.InvalidHeaders"/> is not empty.
+		/// </summary>
+		public static void HeaderValidated(HeaderValidatedArgs args)
 	{
 		if (args.InvalidHeaders.Count() == 0)
 		{
@@ -44,10 +48,10 @@ public static class ConfigurationFunctions
 		throw new HeaderValidationException(args.Context, args.InvalidHeaders, errorMessage.ToString());
 	}
 
-	/// <summary>
-	/// Throws a <c>MissingFieldException</c>.
-	/// </summary>
-	public static void MissingFieldFound(MissingFieldFoundArgs args)
+		/// <summary>
+		/// Throws a <c>MissingFieldException</c>.
+		/// </summary>
+		public static void MissingFieldFound(MissingFieldFoundArgs args)
 	{
 		var messagePostfix = $"You can ignore missing fields by setting {nameof(MissingFieldFound)} to null.";
 
@@ -70,30 +74,30 @@ public static class ConfigurationFunctions
 		throw new MissingFieldException(args.Context, $"Field containing names '{string.Join("' or '", args.HeaderNames)}'{indexText} does not exist. {messagePostfix}");
 	}
 
-	/// <summary>
-	/// Throws a <see cref="BadDataException"/>.
-	/// </summary>
-	public static void BadDataFound(BadDataFoundArgs args)
+		/// <summary>
+		/// Throws a <see cref="BadDataException"/>.
+		/// </summary>
+		public static void BadDataFound(BadDataFoundArgs args)
 	{
 		throw new BadDataException(args.Field, args.RawRecord, args.Context, $"You can ignore bad data by setting {nameof(BadDataFound)} to null.");
 	}
 
-	/// <summary>
-	/// Throws the given <see name="ReadingExceptionOccurredArgs.Exception"/>.
-	/// </summary>
-	public static bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
+		/// <summary>
+		/// Throws the given <see name="ReadingExceptionOccurredArgs.Exception"/>.
+		/// </summary>
+		public static bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
 	{
 		return true;
 	}
 
-	/// <summary>
-	/// Returns true if the field contains a <see cref="IWriterConfiguration.Quote"/>,
-	/// starts with a space, ends with a space, contains \r or \n, or contains
-	/// the <see cref="IWriterConfiguration.Delimiter"/>.
-	/// </summary>
-	/// <param name="args">The args.</param>
-	/// <returns><c>true</c> if the field should be quoted, otherwise <c>false</c>.</returns>
-	public static bool ShouldQuote(ShouldQuoteArgs args)
+		/// <summary>
+		/// Returns true if the field contains a <see cref="IWriterConfiguration.Quote"/>,
+		/// starts with a space, ends with a space, contains \r or \n, or contains
+		/// the <see cref="IWriterConfiguration.Delimiter"/>.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		/// <returns><c>true</c> if the field should be quoted, otherwise <c>false</c>.</returns>
+		public static bool ShouldQuote(ShouldQuoteArgs args)
 	{
 		var config = args.Row.Configuration;
 		var field = args.Field;
@@ -116,25 +120,25 @@ public static class ConfigurationFunctions
 		return shouldQuote;
 	}
 
-	/// <summary>
-	/// Returns the <see name="PrepareHeaderForMatchArgs.Header"/> as given.
-	/// </summary>
-	public static string PrepareHeaderForMatch(PrepareHeaderForMatchArgs args)
+		/// <summary>
+		/// Returns the <see name="PrepareHeaderForMatchArgs.Header"/> as given.
+		/// </summary>
+		public static string PrepareHeaderForMatch(PrepareHeaderForMatchArgs args)
 	{
 		return args.Header ?? string.Empty;
 	}
 
-	/// <summary>
-	/// Returns <c>true</c> if <paramref name="args.ParameterType"/>:
-	/// 1. does not have a parameterless constructor
-	/// 2. has a constructor
-	/// 3. is not a value type
-	/// 4. is not a primitive
-	/// 5. is not an enum
-	/// 6. is not an interface
-	/// 7. TypeCode is an Object.
-	/// </summary>
-	public static bool ShouldUseConstructorParameters(ShouldUseConstructorParametersArgs args)
+		/// <summary>
+		/// Returns <c>true</c> if <paramref name="args.ParameterType"/>:
+		/// 1. does not have a parameterless constructor
+		/// 2. has a constructor
+		/// 3. is not a value type
+		/// 4. is not a primitive
+		/// 5. is not an enum
+		/// 6. is not an interface
+		/// 7. TypeCode is an Object.
+		/// </summary>
+		public static bool ShouldUseConstructorParameters(ShouldUseConstructorParametersArgs args)
 	{
 		return !args.ParameterType.HasParameterlessConstructor()
 			&& args.ParameterType.HasConstructor()
@@ -145,23 +149,23 @@ public static class ConfigurationFunctions
 			&& Type.GetTypeCode(args.ParameterType) == TypeCode.Object;
 	}
 
-	/// <summary>
-	/// Returns the type's constructor with the most parameters.
-	/// If two constructors have the same number of parameters, then
-	/// there is no guarantee which one will be returned. If you have
-	/// that situation, you should probably implement this function yourself.
-	/// </summary>
-	public static ConstructorInfo GetConstructor(GetConstructorArgs args)
+		/// <summary>
+		/// Returns the type's constructor with the most parameters.
+		/// If two constructors have the same number of parameters, then
+		/// there is no guarantee which one will be returned. If you have
+		/// that situation, you should probably implement this function yourself.
+		/// </summary>
+		public static ConstructorInfo GetConstructor(GetConstructorArgs args)
 	{
 		return args.ClassType.GetConstructorWithMostParameters();
 	}
 
-	/// <summary>
-	/// Returns the header name ran through <see cref="PrepareHeaderForMatch(PrepareHeaderForMatchArgs)"/>.
-	/// If no header exists, property names will be Field1, Field2, Field3, etc.
-	/// </summary>
-	/// <param name="args">The args.</param>
-	public static string GetDynamicPropertyName(GetDynamicPropertyNameArgs args)
+		/// <summary>
+		/// Returns the header name ran through <see cref="PrepareHeaderForMatch(PrepareHeaderForMatchArgs)"/>.
+		/// If no header exists, property names will be Field1, Field2, Field3, etc.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		public static string GetDynamicPropertyName(GetDynamicPropertyNameArgs args)
 	{
 		if (args.Context.Reader?.HeaderRecord == null)
 		{
@@ -175,12 +179,12 @@ public static class ConfigurationFunctions
 		return header;
 	}
 
-	/// <summary>
-	/// Detects the delimiter based on the given text.
-	/// Return the detected delimiter or null if one wasn't found.
-	/// </summary>
-	/// <param name="args">The args.</param>
-	public static string GetDelimiter(GetDelimiterArgs args)
+		/// <summary>
+		/// Detects the delimiter based on the given text.
+		/// Return the detected delimiter or null if one wasn't found.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		public static string GetDelimiter(GetDelimiterArgs args)
 	{
 		var text = args.Text;
 		var config = args.Configuration;
@@ -265,5 +269,6 @@ public static class ConfigurationFunctions
 		}
 
 		return newDelimiter ?? config.Delimiter;
+	}
 	}
 }

@@ -4,23 +4,24 @@
 // https://github.com/JoshClose/CsvHelper
 using CsvHelper.Configuration;
 using System.Globalization;
+using System.Linq;
 using System.Numerics;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts a <see cref="BigInteger"/> to and from a <see cref="string"/>.
-/// </summary>
-public class BigIntegerConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the object to a string.
+	/// Converts a <see cref="BigInteger"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="value">The object to convert to a string.</param>
-	/// <param name="row">The <see cref="IWriterRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being written.</param>
-	/// <returns>The string representation of the object.</returns>
-	public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+	public class BigIntegerConverter : DefaultTypeConverter
+	{
+		/// <summary>
+		/// Converts the object to a string.
+		/// </summary>
+		/// <param name="value">The object to convert to a string.</param>
+		/// <param name="row">The <see cref="IWriterRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being written.</param>
+		/// <returns>The string representation of the object.</returns>
+		public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		if (value is BigInteger bi && memberMapData.TypeConverterOptions.Formats?.FirstOrDefault() == null)
 		{
@@ -30,14 +31,14 @@ public class BigIntegerConverter : DefaultTypeConverter
 		return base.ConvertToString(value, row, memberMapData);
 	}
 
-	/// <summary>
-	/// Converts the string to an object.
-	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		var numberStyle = memberMapData.TypeConverterOptions.NumberStyles ?? NumberStyles.Integer;
 
@@ -47,5 +48,6 @@ public class BigIntegerConverter : DefaultTypeConverter
 		}
 
 		return base.ConvertFromString(text, row, memberMapData);
+	}
 	}
 }

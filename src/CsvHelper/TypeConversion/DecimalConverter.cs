@@ -5,21 +5,21 @@
 using CsvHelper.Configuration;
 using System.Globalization;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts a <see cref="decimal"/> to and from a <see cref="string"/>.
-/// </summary>
-public class DecimalConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the string to an object.
+	/// Converts a <see cref="decimal"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+	public class DecimalConverter : DefaultTypeConverter
+	{
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		var numberStyle = memberMapData.TypeConverterOptions.NumberStyles ?? NumberStyles.Number;
 
@@ -29,5 +29,6 @@ public class DecimalConverter : DefaultTypeConverter
 		}
 
 		return base.ConvertFromString(text, row, memberMapData);
+	}
 	}
 }

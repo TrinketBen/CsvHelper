@@ -2,43 +2,49 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
-namespace CsvHelper.Expressions;
 
-/// <summary>
-/// Writes expando objects.
-/// </summary>
-public class ExpandoObjectRecordWriter : RecordWriter
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CsvHelper.Expressions
 {
 	/// <summary>
-	/// Initializes a new instance using the given writer.
+	/// Writes expando objects.
 	/// </summary>
-	/// <param name="writer">The writer.</param>
-	public ExpandoObjectRecordWriter(CsvWriter writer) : base(writer) { }
-
-	/// <summary>
-	/// Creates a <see cref="Delegate"/> of type <see cref="Action{T}"/>
-	/// that will write the given record using the current writer row.
-	/// </summary>
-	/// <typeparam name="T">The record type.</typeparam>
-	/// <param name="recordType">The record.</param>
-	protected override Action<T> CreateWriteDelegate<T>(Type recordType)
+	public class ExpandoObjectRecordWriter : RecordWriter
 	{
-		Action<T> action = r =>
+		/// <summary>
+		/// Initializes a new instance using the given writer.
+		/// </summary>
+		/// <param name="writer">The writer.</param>
+		public ExpandoObjectRecordWriter(CsvWriter writer) : base(writer) { }
+
+		/// <summary>
+		/// Creates a <see cref="Delegate"/> of type <see cref="Action{T}"/>
+		/// that will write the given record using the current writer row.
+		/// </summary>
+		/// <typeparam name="T">The record type.</typeparam>
+		/// <param name="recordType">The record.</param>
+		protected override Action<T> CreateWriteDelegate<T>(Type recordType)
 		{
-			var dict = ((IDictionary<string, object>)r!).AsEnumerable();
-
-			if (Writer.Configuration.DynamicPropertySort != null)
+			Action<T> action = r =>
 			{
-				dict = dict.OrderBy(pair => pair.Key, Writer.Configuration.DynamicPropertySort);
-			}
+				var dict = ((IDictionary<string, object>)r!).AsEnumerable();
 
-			var values = dict.Select(pair => pair.Value);
-			foreach (var val in values)
-			{
-				Writer.WriteField(val);
-			}
-		};
+				if (Writer.Configuration.DynamicPropertySort != null)
+				{
+					dict = dict.OrderBy(pair => pair.Key, Writer.Configuration.DynamicPropertySort);
+				}
 
-		return action;
+				var values = dict.Select(pair => pair.Value);
+				foreach (var val in values)
+				{
+					Writer.WriteField(val);
+				}
+			};
+
+			return action;
+		}
 	}
 }

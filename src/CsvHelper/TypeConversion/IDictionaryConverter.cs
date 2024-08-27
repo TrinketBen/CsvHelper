@@ -4,22 +4,23 @@
 // https://github.com/JoshClose/CsvHelper
 using CsvHelper.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts an <see cref="IDictionary"/> to and from a <see cref="string"/>.
-/// </summary>
-public class IDictionaryConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
 	/// <summary>
-	/// Converts the object to a string.
+	/// Converts an <see cref="IDictionary"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="value">The object to convert to a string.</param>
-	/// <param name="row">The <see cref="IWriterRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being written.</param>
-	/// <returns>The string representation of the object.</returns>
-	public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+	public class IDictionaryConverter : DefaultTypeConverter
+	{
+		/// <summary>
+		/// Converts the object to a string.
+		/// </summary>
+		/// <param name="value">The object to convert to a string.</param>
+		/// <param name="row">The <see cref="IWriterRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being written.</param>
+		/// <returns>The string representation of the object.</returns>
+		public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		var dictionary = value as IDictionary;
 		if (dictionary == null)
@@ -35,16 +36,16 @@ public class IDictionaryConverter : DefaultTypeConverter
 		return null;
 	}
 
-	/// <summary>
-	/// Converts the string to an object.
-	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
-		var dictionary = new Dictionary<string, string?>();
+		var dictionary = new Dictionary<string, string>();
 
 		var indexEnd = memberMapData.IndexEnd < memberMapData.Index
 			? row.Parser.Count - 1
@@ -59,5 +60,6 @@ public class IDictionaryConverter : DefaultTypeConverter
 		}
 
 		return dictionary;
+	}
 	}
 }

@@ -2,53 +2,57 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
-namespace CsvHelper.Expressions;
-
-/// <summary>
-/// Factory to create record writers.
-/// </summary>
-public class RecordWriterFactory
+namespace CsvHelper.Expressions
 {
-	private readonly ExpandoObjectRecordWriter expandoObjectRecordWriter;
-	private readonly DynamicRecordWriter dynamicRecordWriter;
-	private readonly PrimitiveRecordWriter primitiveRecordWriter;
-	private readonly ObjectRecordWriter objectRecordWriter;
-
 	/// <summary>
-	/// Initializes a new instance using the given writer.
+	/// Factory to create record writers.
 	/// </summary>
-	/// <param name="writer">The writer.</param>
-	public RecordWriterFactory(CsvWriter writer)
+	public class RecordWriterFactory
 	{
-		expandoObjectRecordWriter = new ExpandoObjectRecordWriter(writer);
-		dynamicRecordWriter = new DynamicRecordWriter(writer);
-		primitiveRecordWriter = new PrimitiveRecordWriter(writer);
-		objectRecordWriter = new ObjectRecordWriter(writer);
-	}
+		private readonly ExpandoObjectRecordWriter expandoObjectRecordWriter;
+		private readonly DynamicRecordWriter dynamicRecordWriter;
+		private readonly PrimitiveRecordWriter primitiveRecordWriter;
+		private readonly ObjectRecordWriter objectRecordWriter;
 
-	/// <summary>
-	/// Creates a new record writer for the given record.
-	/// </summary>
-	/// <param name="recordType">The type of the record.</param>
-	public virtual RecordWriter MakeRecordWriter(Type recordType)
-	{
-		if (recordType.IsPrimitive)
+		/// <summary>
+		/// Initializes a new instance using the given writer.
+		/// </summary>
+		/// <param name="writer">The writer.</param>
+		public RecordWriterFactory(CsvWriter writer)
 		{
-			return primitiveRecordWriter;
+			expandoObjectRecordWriter = new ExpandoObjectRecordWriter(writer);
+			dynamicRecordWriter = new DynamicRecordWriter(writer);
+			primitiveRecordWriter = new PrimitiveRecordWriter(writer);
+			objectRecordWriter = new ObjectRecordWriter(writer);
 		}
 
-		if (typeof(IDictionary<string, object>).IsAssignableFrom(recordType))
+		/// <summary>
+		/// Creates a new record writer for the given record.
+		/// </summary>
+		/// <param name="recordType">The type of the record.</param>
+		public virtual RecordWriter MakeRecordWriter(Type recordType)
 		{
-			return expandoObjectRecordWriter;
-		}
+			if (recordType.IsPrimitive)
+			{
+				return primitiveRecordWriter;
+			}
 
-		if (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(recordType))
-		{
-			return dynamicRecordWriter;
-		}
+			if (typeof(IDictionary<string, object>).IsAssignableFrom(recordType))
+			{
+				return expandoObjectRecordWriter;
+			}
 
-		return objectRecordWriter;
+			if (typeof(IDynamicMetaObjectProvider).IsAssignableFrom(recordType))
+			{
+				return dynamicRecordWriter;
+			}
+
+			return objectRecordWriter;
+		}
 	}
 }

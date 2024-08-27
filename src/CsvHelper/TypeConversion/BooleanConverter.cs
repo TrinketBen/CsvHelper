@@ -4,16 +4,17 @@
 // https://github.com/JoshClose/CsvHelper
 using CsvHelper.Configuration;
 using System.Globalization;
+using System.Linq;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts a <see cref="bool"/> to and from a <see cref="string"/>.
-/// </summary>
-public class BooleanConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
-	/// <inheritdoc/>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+	/// <summary>
+	/// Converts a <see cref="bool"/> to and from a <see cref="string"/>.
+	/// </summary>
+	public class BooleanConverter : DefaultTypeConverter
+	{
+		/// <inheritdoc/>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		if (bool.TryParse(text, out var b))
 		{
@@ -52,8 +53,8 @@ public class BooleanConverter : DefaultTypeConverter
 		return base.ConvertFromString(text, row, memberMapData);
 	}
 
-	/// <inheritdoc/>
-	public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+		/// <inheritdoc/>
+		public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		var b = value as bool?;
 		if (b == true && memberMapData.TypeConverterOptions.BooleanTrueValues.Count > 0)
@@ -66,5 +67,6 @@ public class BooleanConverter : DefaultTypeConverter
 		}
 
 		return base.ConvertToString(value, row, memberMapData);
+	}
 	}
 }

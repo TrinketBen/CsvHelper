@@ -2,34 +2,37 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
+using System.Collections.Generic;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using System.Reflection;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts an <see cref="Enum"/> to and from a <see cref="string"/>.
-/// </summary>
-public class EnumConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
-	private readonly Type type;
-	private readonly Dictionary<string, string> enumNamesByAttributeNames = new Dictionary<string, string>();
-	private readonly Dictionary<string, string> enumNamesByAttributeNamesIgnoreCase = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-	private readonly Dictionary<object, string> attributeNamesByEnumValues = new Dictionary<object, string>();
-
-	// enumNamesByAttributeNames
-	// enumNamesByAttributeNamesIgnoreCase
-	// [Name("Foo")]:One
-
-	// attributeNamesByEnumValues
-	// 1:[Name("Foo")]
-
 	/// <summary>
-	/// Creates a new <see cref="EnumConverter"/> for the given <see cref="Enum"/> <see cref="System.Type"/>.
+	/// Converts an <see cref="Enum"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="type">The type of the Enum.</param>
-	public EnumConverter(Type type)
+	public class EnumConverter : DefaultTypeConverter
+	{
+		private readonly Type type;
+		private readonly Dictionary<string, string> enumNamesByAttributeNames = new Dictionary<string, string>();
+		private readonly Dictionary<string, string> enumNamesByAttributeNamesIgnoreCase = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<object, string> attributeNamesByEnumValues = new Dictionary<object, string>();
+
+		// enumNamesByAttributeNames
+		// enumNamesByAttributeNamesIgnoreCase
+		// [Name("Foo")]:One
+
+		// attributeNamesByEnumValues
+		// 1:[Name("Foo")]
+
+		/// <summary>
+		/// Creates a new <see cref="EnumConverter"/> for the given <see cref="Enum"/> <see cref="System.Type"/>.
+		/// </summary>
+		/// <param name="type">The type of the Enum.</param>
+		public EnumConverter(Type type)
 	{
 		if (!typeof(Enum).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
 		{
@@ -66,21 +69,21 @@ public class EnumConverter : DefaultTypeConverter
 		}
 	}
 
-	/// <inheritdoc/>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
-	{
-		var ignoreCase = memberMapData.TypeConverterOptions.EnumIgnoreCase ?? false;
-
-		if (text != null)
+		/// <inheritdoc/>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 		{
-			var dict = ignoreCase
-				? enumNamesByAttributeNamesIgnoreCase
-				: enumNamesByAttributeNames;
-			if (dict.TryGetValue(text, out var name))
+			var ignoreCase = memberMapData.TypeConverterOptions.EnumIgnoreCase ?? false;
+
+			if (text != null)
 			{
-				return Enum.Parse(type, name);
+				var dict = ignoreCase
+					? enumNamesByAttributeNamesIgnoreCase
+					: enumNamesByAttributeNames;
+				if (dict.TryGetValue(text, out var name))
+				{
+					return Enum.Parse(type, name);
+				}
 			}
-		}
 
 #if NETSTANDARD2_1_OR_GREATER || NET6_0_OR_GREATER
 		if (Enum.TryParse(type, text, ignoreCase, out var value))
@@ -92,19 +95,19 @@ public class EnumConverter : DefaultTypeConverter
 			return base.ConvertFromString(text, row, memberMapData);
 		}
 #else
-		try
-		{
-			return Enum.Parse(type, text, ignoreCase);
-		}
-		catch
-		{
-			return base.ConvertFromString(text, row, memberMapData);
-		}
+			try
+			{
+				return Enum.Parse(type, text, ignoreCase);
+			}
+			catch
+			{
+				return base.ConvertFromString(text, row, memberMapData);
+			}
 #endif
-	}
+		}
 
-	/// <inheritdoc/>
-	public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+		/// <inheritdoc/>
+		public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		if (value != null && attributeNamesByEnumValues.TryGetValue(value, out var name))
 		{
@@ -112,5 +115,6 @@ public class EnumConverter : DefaultTypeConverter
 		}
 
 		return base.ConvertToString(value, row, memberMapData);
+	}
 	}
 }

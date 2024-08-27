@@ -2,70 +2,74 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.TypeConversion;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace CsvHelper.Configuration;
-
-///<summary>
-/// Maps class members to CSV fields.
-///</summary>
-public abstract class ClassMap
+namespace CsvHelper.Configuration
 {
-	private static readonly List<Type> enumerableConverters = new List<Type>
+	///<summary>
+	/// Maps class members to CSV fields.
+	///</summary>
+	public abstract class ClassMap
 	{
-		typeof(ArrayConverter),
-		typeof(CollectionGenericConverter),
-		typeof(EnumerableConverter),
-		typeof(IDictionaryConverter),
-		typeof(IDictionaryGenericConverter),
-		typeof(IEnumerableConverter),
-		typeof(IEnumerableGenericConverter)
-	};
+		private static readonly List<Type> enumerableConverters = new List<Type>
+		{
+			typeof(ArrayConverter),
+			typeof(CollectionGenericConverter),
+			typeof(EnumerableConverter),
+			typeof(IDictionaryConverter),
+			typeof(IDictionaryGenericConverter),
+			typeof(IEnumerableConverter),
+			typeof(IEnumerableGenericConverter)
+		};
 
-	/// <summary>
-	/// The type of the class this map is for.
-	/// </summary>
-	public virtual Type ClassType { get; private set; }
+		/// <summary>
+		/// The type of the class this map is for.
+		/// </summary>
+		public virtual Type ClassType { get; private set; }
 
-	/// <summary>
-	/// The class constructor parameter mappings.
-	/// </summary>
-	public virtual List<ParameterMap> ParameterMaps { get; } = new List<ParameterMap>();
+		/// <summary>
+		/// The class constructor parameter mappings.
+		/// </summary>
+		public virtual List<ParameterMap> ParameterMaps { get; } = new List<ParameterMap>();
 
-	/// <summary>
-	/// The class member mappings.
-	/// </summary>
-	public virtual MemberMapCollection MemberMaps { get; } = new MemberMapCollection();
+		/// <summary>
+		/// The class member mappings.
+		/// </summary>
+		public virtual MemberMapCollection MemberMaps { get; } = new MemberMapCollection();
 
-	/// <summary>
-	/// The class member reference mappings.
-	/// </summary>
-	public virtual MemberReferenceMapCollection ReferenceMaps { get; } = new MemberReferenceMapCollection();
+		/// <summary>
+		/// The class member reference mappings.
+		/// </summary>
+		public virtual MemberReferenceMapCollection ReferenceMaps { get; } = new MemberReferenceMapCollection();
 
-	/// <summary>
-	/// Allow only internal creation of CsvClassMap.
-	/// </summary>
-	/// <param name="classType">The type of the class this map is for.</param>
-	internal ClassMap(Type classType)
+		/// <summary>
+		/// Allow only internal creation of CsvClassMap.
+		/// </summary>
+		/// <param name="classType">The type of the class this map is for.</param>
+		internal ClassMap(Type classType)
 	{
 		ClassType = classType;
 	}
 
-	/// <summary>
-	/// Maps a member to a CSV field.
-	/// </summary>
-	/// <param name="classType">The type of the class this map is for. This may not be the same type
-	/// as the member.DeclaringType or the current ClassType due to nested member mappings.</param>
-	/// <param name="member">The member to map.</param>
-	/// <param name="useExistingMap">If true, an existing map will be used if available.
-	/// If false, a new map is created for the same member.</param>
-	/// <returns>The member mapping.</returns>
-	public MemberMap Map(Type classType, MemberInfo member, bool useExistingMap = true)
+		/// <summary>
+		/// Maps a member to a CSV field.
+		/// </summary>
+		/// <param name="classType">The type of the class this map is for. This may not be the same type
+		/// as the member.DeclaringType or the current ClassType due to nested member mappings.</param>
+		/// <param name="member">The member to map.</param>
+		/// <param name="useExistingMap">If true, an existing map will be used if available.
+		/// If false, a new map is created for the same member.</param>
+		/// <returns>The member mapping.</returns>
+		public MemberMap Map(Type classType, MemberInfo member, bool useExistingMap = true)
 	{
 		if (useExistingMap)
 		{
@@ -83,12 +87,12 @@ public abstract class ClassMap
 		return memberMap;
 	}
 
-	/// <summary>
-	/// Maps a non-member to a CSV field. This allows for writing
-	/// data that isn't mapped to a class member.
-	/// </summary>
-	/// <returns>The member mapping.</returns>
-	public virtual MemberMap<object, object> Map()
+		/// <summary>
+		/// Maps a non-member to a CSV field. This allows for writing
+		/// data that isn't mapped to a class member.
+		/// </summary>
+		/// <returns>The member mapping.</returns>
+		public virtual MemberMap<object, object> Map()
 	{
 		var memberMap = new MemberMap<object, object>(null);
 		memberMap.Data.Index = GetMaxIndex() + 1;
@@ -97,14 +101,14 @@ public abstract class ClassMap
 		return memberMap;
 	}
 
-	/// <summary>
-	/// Maps a member to another class map.
-	/// </summary>
-	/// <param name="classMapType">The type of the class map.</param>
-	/// <param name="member">The member.</param>
-	/// <param name="constructorArgs">Constructor arguments used to create the reference map.</param>
-	/// <returns>The reference mapping for the member.</returns>
-	public virtual MemberReferenceMap References(Type classMapType, MemberInfo member, params object[] constructorArgs)
+		/// <summary>
+		/// Maps a member to another class map.
+		/// </summary>
+		/// <param name="classMapType">The type of the class map.</param>
+		/// <param name="member">The member.</param>
+		/// <param name="constructorArgs">Constructor arguments used to create the reference map.</param>
+		/// <returns>The reference mapping for the member.</returns>
+		public virtual MemberReferenceMap References(Type classMapType, MemberInfo member, params object[] constructorArgs)
 	{
 		if (!typeof(ClassMap).IsAssignableFrom(classMapType))
 		{
@@ -126,11 +130,11 @@ public abstract class ClassMap
 		return reference;
 	}
 
-	/// <summary>
-	/// Maps a constructor parameter to a CSV field.
-	/// </summary>
-	/// <param name="name">The name of the constructor parameter.</param>
-	public virtual ParameterMap Parameter(string name)
+		/// <summary>
+		/// Maps a constructor parameter to a CSV field.
+		/// </summary>
+		/// <param name="name">The name of the constructor parameter.</param>
+		public virtual ParameterMap Parameter(string name)
 	{
 		if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
 
@@ -139,12 +143,12 @@ public abstract class ClassMap
 		return Parameter(() => ConfigurationFunctions.GetConstructor(args), name);
 	}
 
-	/// <summary>
-	/// Maps a constructor parameter to a CSV field.
-	/// </summary>
-	/// <param name="getConstructor">A function that returns the <see cref="ConstructorInfo"/> for the constructor.</param>
-	/// <param name="name">The name of the constructor parameter.</param>
-	public virtual ParameterMap Parameter(Func<ConstructorInfo> getConstructor, string name)
+		/// <summary>
+		/// Maps a constructor parameter to a CSV field.
+		/// </summary>
+		/// <param name="getConstructor">A function that returns the <see cref="ConstructorInfo"/> for the constructor.</param>
+		/// <param name="name">The name of the constructor parameter.</param>
+		public virtual ParameterMap Parameter(Func<ConstructorInfo> getConstructor, string name)
 	{
 		if (getConstructor == null) throw new ArgumentNullException(nameof(getConstructor));
 		if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
@@ -160,12 +164,12 @@ public abstract class ClassMap
 		return Parameter(constructor, parameter);
 	}
 
-	/// <summary>
-	/// Maps a constructor parameter to a CSV field.
-	/// </summary>
-	/// <param name="constructor">The <see cref="ConstructorInfo"/> for the constructor.</param>
-	/// <param name="parameter">The <see cref="ParameterInfo"/> for the constructor parameter.</param>
-	public virtual ParameterMap Parameter(ConstructorInfo constructor, ParameterInfo parameter)
+		/// <summary>
+		/// Maps a constructor parameter to a CSV field.
+		/// </summary>
+		/// <param name="constructor">The <see cref="ConstructorInfo"/> for the constructor.</param>
+		/// <param name="parameter">The <see cref="ParameterInfo"/> for the constructor parameter.</param>
+		public virtual ParameterMap Parameter(ConstructorInfo constructor, ParameterInfo parameter)
 	{
 		if (constructor == null) throw new ArgumentNullException(nameof(constructor));
 		if (parameter == null) throw new ArgumentNullException(nameof(parameter));
@@ -182,32 +186,32 @@ public abstract class ClassMap
 		return parameterMap;
 	}
 
-	/// <summary>
-	/// Auto maps all members for the given type. If a member
-	/// is mapped again it will override the existing map.
-	/// </summary>
-	/// <param name="culture">The culture.</param>
-	public virtual void AutoMap(CultureInfo culture)
+		/// <summary>
+		/// Auto maps all members for the given type. If a member
+		/// is mapped again it will override the existing map.
+		/// </summary>
+		/// <param name="culture">The culture.</param>
+		public virtual void AutoMap(CultureInfo culture)
 	{
 		AutoMap(new CsvConfiguration(culture));
 	}
 
-	/// <summary>
-	/// Auto maps all members for the given type. If a member 
-	/// is mapped again it will override the existing map.
-	/// </summary>
-	/// <param name="configuration">The configuration.</param>
-	public virtual void AutoMap(CsvConfiguration configuration)
+		/// <summary>
+		/// Auto maps all members for the given type. If a member
+		/// is mapped again it will override the existing map.
+		/// </summary>
+		/// <param name="configuration">The configuration.</param>
+		public virtual void AutoMap(CsvConfiguration configuration)
 	{
 		AutoMap(new CsvContext(configuration));
 	}
 
-	/// <summary>
-	/// Auto maps all members for the given type. If a member 
-	/// is mapped again it will override the existing map.
-	/// </summary>
-	/// <param name="context">The context.</param>
-	public virtual void AutoMap(CsvContext context)
+		/// <summary>
+		/// Auto maps all members for the given type. If a member
+		/// is mapped again it will override the existing map.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		public virtual void AutoMap(CsvContext context)
 	{
 		var type = GetGenericType();
 		if (typeof(IEnumerable).IsAssignableFrom(type))
@@ -232,12 +236,12 @@ public abstract class ClassMap
 		AutoMapMembers(this, context, mapParents);
 	}
 
-	/// <summary>
-	/// Get the largest index for the
-	/// members and references.
-	/// </summary>
-	/// <returns>The max index.</returns>
-	public virtual int GetMaxIndex(bool isParameter = false)
+		/// <summary>
+		/// Get the largest index for the
+		/// members and references.
+		/// </summary>
+		/// <returns>The max index.</returns>
+		public virtual int GetMaxIndex(bool isParameter = false)
 	{
 		if (isParameter)
 		{
@@ -263,12 +267,12 @@ public abstract class ClassMap
 		return indexes.Max();
 	}
 
-	/// <summary>
-	/// Resets the indexes based on the given start index.
-	/// </summary>
-	/// <param name="indexStart">The index start.</param>
-	/// <returns>The last index + 1.</returns>
-	public virtual int ReIndex(int indexStart = 0)
+		/// <summary>
+		/// Resets the indexes based on the given start index.
+		/// </summary>
+		/// <param name="indexStart">The index start.</param>
+		/// <returns>The last index + 1.</returns>
+		public virtual int ReIndex(int indexStart = 0)
 	{
 		foreach (var parameterMap in ParameterMaps)
 		{
@@ -291,14 +295,14 @@ public abstract class ClassMap
 		return indexStart;
 	}
 
-	/// <summary>
-	/// Auto maps the given map and checks for circular references as it goes.
-	/// </summary>
-	/// <param name="map">The map to auto map.</param>
-	/// <param name="context">The context.</param>
-	/// <param name="mapParents">The list of parents for the map.</param>
-	/// <param name="indexStart">The index starting point.</param>
-	protected virtual void AutoMapMembers(ClassMap map, CsvContext context, LinkedList<Type> mapParents, int indexStart = 0)
+		/// <summary>
+		/// Auto maps the given map and checks for circular references as it goes.
+		/// </summary>
+		/// <param name="map">The map to auto map.</param>
+		/// <param name="context">The context.</param>
+		/// <param name="mapParents">The list of parents for the map.</param>
+		/// <param name="indexStart">The index starting point.</param>
+		protected virtual void AutoMapMembers(ClassMap map, CsvContext context, LinkedList<Type> mapParents, int indexStart = 0)
 	{
 		var type = map.GetGenericType();
 
@@ -321,7 +325,7 @@ public abstract class ClassMap
 				{
 					// Multiple properties could have the same name if a child class property
 					// is hiding a parent class property by using `new`. It's possible that
-					// the order of the properties returned 
+					// the order of the properties returned
 					continue;
 				}
 
@@ -342,7 +346,7 @@ public abstract class ClassMap
 				{
 					// Multiple fields could have the same name if a child class field
 					// is hiding a parent class field by using `new`. It's possible that
-					// the order of the fields returned 
+					// the order of the fields returned
 					continue;
 				}
 
@@ -441,14 +445,14 @@ public abstract class ClassMap
 		map.ReIndex(indexStart);
 	}
 
-	/// <summary>
-	/// Auto maps the given map using constructor parameters.
-	/// </summary>
-	/// <param name="map">The map.</param>
-	/// <param name="context">The context.</param>
-	/// <param name="mapParents">The list of parents for the map.</param>
-	/// <param name="indexStart">The index starting point.</param>
-	protected virtual void AutoMapConstructorParameters(ClassMap map, CsvContext context, LinkedList<Type> mapParents, int indexStart = 0)
+		/// <summary>
+		/// Auto maps the given map using constructor parameters.
+		/// </summary>
+		/// <param name="map">The map.</param>
+		/// <param name="context">The context.</param>
+		/// <param name="mapParents">The list of parents for the map.</param>
+		/// <param name="indexStart">The index starting point.</param>
+		protected virtual void AutoMapConstructorParameters(ClassMap map, CsvContext context, LinkedList<Type> mapParents, int indexStart = 0)
 	{
 		var type = map.GetGenericType();
 		var args = new GetConstructorArgs(map.ClassType);
@@ -537,14 +541,14 @@ public abstract class ClassMap
 		map.ReIndex(indexStart);
 	}
 
-	/// <summary>
-	/// Checks for circular references.
-	/// </summary>
-	/// <param name="type">The type to check for.</param>
-	/// <param name="mapParents">The list of parents to check against.</param>
-	/// <returns>A value indicating if a circular reference was found.
-	/// True if a circular reference was found, otherwise false.</returns>
-	protected virtual bool CheckForCircularReference(Type type, LinkedList<Type> mapParents)
+		/// <summary>
+		/// Checks for circular references.
+		/// </summary>
+		/// <param name="type">The type to check for.</param>
+		/// <param name="mapParents">The list of parents to check against.</param>
+		/// <returns>A value indicating if a circular reference was found.
+		/// True if a circular reference was found, otherwise false.</returns>
+		protected virtual bool CheckForCircularReference(Type type, LinkedList<Type> mapParents)
 	{
 		if (mapParents.Count == 0)
 		{
@@ -569,19 +573,19 @@ public abstract class ClassMap
 		return false;
 	}
 
-	/// <summary>
-	/// Gets the generic type for this class map.
-	/// </summary>
-	protected virtual Type GetGenericType()
+		/// <summary>
+		/// Gets the generic type for this class map.
+		/// </summary>
+		protected virtual Type GetGenericType()
 	{
 		return GetType().GetTypeInfo().BaseType?.GetGenericArguments()[0] ?? throw new ConfigurationException();
 	}
 
-	/// <summary>
-	/// Applies attribute configurations to the map.
-	/// </summary>
-	/// <param name="parameterMap">The parameter map.</param>
-	protected virtual void ApplyAttributes(ParameterMap parameterMap)
+		/// <summary>
+		/// Applies attribute configurations to the map.
+		/// </summary>
+		/// <param name="parameterMap">The parameter map.</param>
+		protected virtual void ApplyAttributes(ParameterMap parameterMap)
 	{
 		var parameter = parameterMap.Data.Parameter;
 		var attributes = parameter.GetCustomAttributes().OfType<IParameterMapper>();
@@ -592,11 +596,11 @@ public abstract class ClassMap
 		}
 	}
 
-	/// <summary>
-	/// Applies attribute configurations to the map.
-	/// </summary>
-	/// <param name="referenceMap">The parameter reference map.</param>
-	protected virtual void ApplyAttributes(ParameterReferenceMap referenceMap)
+		/// <summary>
+		/// Applies attribute configurations to the map.
+		/// </summary>
+		/// <param name="referenceMap">The parameter reference map.</param>
+		protected virtual void ApplyAttributes(ParameterReferenceMap referenceMap)
 	{
 		var parameter = referenceMap.Data.Parameter;
 		var attributes = parameter.GetCustomAttributes().OfType<IParameterReferenceMapper>();
@@ -607,11 +611,11 @@ public abstract class ClassMap
 		}
 	}
 
-	/// <summary>
-	/// Applies attribute configurations to the map.
-	/// </summary>
-	/// <param name="memberMap">The member map.</param>
-	protected virtual void ApplyAttributes(MemberMap memberMap)
+		/// <summary>
+		/// Applies attribute configurations to the map.
+		/// </summary>
+		/// <param name="memberMap">The member map.</param>
+		protected virtual void ApplyAttributes(MemberMap memberMap)
 	{
 		if (memberMap.Data.Member == null)
 		{
@@ -627,11 +631,11 @@ public abstract class ClassMap
 		}
 	}
 
-	/// <summary>
-	/// Applies attribute configurations to the map.
-	/// </summary>
-	/// <param name="referenceMap">The member reference map.</param>
-	protected virtual void ApplyAttributes(MemberReferenceMap referenceMap)
+		/// <summary>
+		/// Applies attribute configurations to the map.
+		/// </summary>
+		/// <param name="referenceMap">The member reference map.</param>
+		protected virtual void ApplyAttributes(MemberReferenceMap referenceMap)
 	{
 		var member = referenceMap.Data.Member;
 		var attributes = member.GetCustomAttributes().OfType<IMemberReferenceMapper>();
@@ -640,5 +644,6 @@ public abstract class ClassMap
 		{
 			attribute.ApplyTo(referenceMap);
 		}
+	}
 	}
 }

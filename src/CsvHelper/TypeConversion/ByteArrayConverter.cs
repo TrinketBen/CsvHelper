@@ -2,25 +2,27 @@
 // This file is a part of CsvHelper and is dual licensed under MS-PL and Apache 2.0.
 // See LICENSE.txt for details or visit http://www.opensource.org/licenses/ms-pl.html for MS-PL and http://opensource.org/licenses/Apache-2.0 for Apache 2.0.
 // https://github.com/JoshClose/CsvHelper
+
+using System;
 using CsvHelper.Configuration;
 using System.Text;
 
-namespace CsvHelper.TypeConversion;
-
-/// <summary>
-/// Converts a <see cref="T:Byte[]"/> to and from a <see cref="string"/>.
-/// </summary>
-public class ByteArrayConverter : DefaultTypeConverter
+namespace CsvHelper.TypeConversion
 {
-	private readonly ByteArrayConverterOptions options;
-	private readonly string HexStringPrefix;
-	private readonly byte ByteLength;
-
 	/// <summary>
-	/// Creates a new ByteArrayConverter using the given <see cref="ByteArrayConverterOptions"/>.
+	/// Converts a <see cref="T:Byte[]"/> to and from a <see cref="string"/>.
 	/// </summary>
-	/// <param name="options">The options.</param>
-	public ByteArrayConverter(ByteArrayConverterOptions options = ByteArrayConverterOptions.Hexadecimal | ByteArrayConverterOptions.HexInclude0x)
+	public class ByteArrayConverter : DefaultTypeConverter
+	{
+		private readonly ByteArrayConverterOptions options;
+		private readonly string HexStringPrefix;
+		private readonly byte ByteLength;
+
+		/// <summary>
+		/// Creates a new ByteArrayConverter using the given <see cref="ByteArrayConverterOptions"/>.
+		/// </summary>
+		/// <param name="options">The options.</param>
+		public ByteArrayConverter(ByteArrayConverterOptions options = ByteArrayConverterOptions.Hexadecimal | ByteArrayConverterOptions.HexInclude0x)
 	{
 		// Defaults to the literal format used by C# for whole numbers, and SQL Server for binary data.
 		this.options = options;
@@ -30,14 +32,14 @@ public class ByteArrayConverter : DefaultTypeConverter
 		ByteLength = (options & ByteArrayConverterOptions.HexDashes) == ByteArrayConverterOptions.HexDashes ? (byte)3 : (byte)2;
 	}
 
-	/// <summary>
-	/// Converts the object to a string.
-	/// </summary>
-	/// <param name="value">The object to convert to a string.</param>
-	/// <param name="row">The <see cref="IWriterRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being written.</param>
-	/// <returns>The string representation of the object.</returns>
-	public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+		/// <summary>
+		/// Converts the object to a string.
+		/// </summary>
+		/// <param name="value">The object to convert to a string.</param>
+		/// <param name="row">The <see cref="IWriterRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being written.</param>
+		/// <returns>The string representation of the object.</returns>
+		public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
 	{
 		if (value is byte[] byteArray)
 		{
@@ -49,14 +51,14 @@ public class ByteArrayConverter : DefaultTypeConverter
 		return base.ConvertToString(value, row, memberMapData);
 	}
 
-	/// <summary>
-	/// Converts the string to an object.
-	/// </summary>
-	/// <param name="text">The string to convert to an object.</param>
-	/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
-	/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
-	/// <returns>The object created from the string.</returns>
-	public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+		/// <summary>
+		/// Converts the string to an object.
+		/// </summary>
+		/// <param name="text">The string to convert to an object.</param>
+		/// <param name="row">The <see cref="IReaderRow"/> for the current record.</param>
+		/// <param name="memberMapData">The <see cref="MemberMapData"/> for the member being created.</param>
+		/// <returns>The object created from the string.</returns>
+		public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
 	{
 		if (text != null)
 		{
@@ -68,7 +70,7 @@ public class ByteArrayConverter : DefaultTypeConverter
 		return base.ConvertFromString(text, row, memberMapData);
 	}
 
-	private string ByteArrayToHexString(byte[] byteArray)
+		private string ByteArrayToHexString(byte[] byteArray)
 	{
 		var hexString = new StringBuilder();
 
@@ -90,7 +92,7 @@ public class ByteArrayConverter : DefaultTypeConverter
 		return hexString.ToString();
 	}
 
-	private byte[] HexStringToByteArray(string hex)
+		private byte[] HexStringToByteArray(string hex)
 	{
 		var has0x = hex.StartsWith("0x");
 
@@ -108,7 +110,7 @@ public class ByteArrayConverter : DefaultTypeConverter
 		return byteArray;
 	}
 
-	private void ValidateOptions()
+		private void ValidateOptions()
 	{
 		if ((options & ByteArrayConverterOptions.Base64) == ByteArrayConverterOptions.Base64)
 		{
@@ -120,5 +122,6 @@ public class ByteArrayConverter : DefaultTypeConverter
 				};
 			}
 		}
+	}
 	}
 }
